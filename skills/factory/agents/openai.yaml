@@ -1,0 +1,3 @@
+# Run only when the founder types $factory. Do not match on the description alone.
+policy:
+  allow_implicit_invocation: false
