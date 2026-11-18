@@ -1,96 +1,167 @@
-# Startup factory
+<div align="center">
 
-A team of agents that takes a niche or an idea and tells you whether it is worth your next 30 days. It runs inside Claude Code and inside Codex (OpenAI).
+# 🏭 Startup Factory
 
-## Use it in Codex
+**Give it a niche. Get an honest answer on whether it is worth your next 30 days.**
 
-Open this folder in Codex and trust the project, so Codex reads `.codex/config.toml`. Then type:
+A team of seven AI agents researches the market, mines real customer complaints, sizes the money, judges the evidence and writes a 30 day validation plan you can start tomorrow.
+
+![Codex](https://img.shields.io/badge/Codex-ready-111111?logo=openai&logoColor=white)
+![Claude Code](https://img.shields.io/badge/Claude_Code-ready-D97757?logo=anthropic&logoColor=white)
+![npx skills](https://img.shields.io/badge/install-npx%20skills-2ea44f)
+
+</div>
+
+---
+
+## ⚡ Direct start
+
+**Codex, in any project folder:**
+
+```bash
+npx skills add tiagoapolo/startup-factory-skill --skill factory -a codex
+```
+
+```bash
+codex --search
+```
+
+Then type:
 
 ```
 $factory invoicing for freelance designers in Brazil
 ```
 
-Other commands:
+That is it. On the first run the skill installs its seven specialists into `.codex/agents/` and creates `founder.md` for you. If Codex says the agents are not loaded, restart it once.
 
+**Claude Code:**
+
+```bash
+git clone https://github.com/tiagoapolo/startup-factory-skill.git
 ```
-$factory status
-$factory resume 20261116_invoicing_designers
+
+```bash
+cd startup-factory-skill && claude
 ```
 
-What is different from Claude Code:
-
-* Questions to you are asked in the chat as numbered options. Reply with a number.
-* The specialists ship inside the skill, in `skills/factory/specialists/`. The skill copies them to `.codex/agents/` on its first run. They are generated from `.claude/agents/`, so after you edit an agent, run `python3 scripts/sync_codex.py`.
-* The research needs live web pages. `.codex/config.toml` sets `web_search = "live"`.
-* Codex does not limit where an agent writes. The agent files tell each one to write only inside its run folder, but nothing enforces it. Read the diff of a run before you commit it.
-* Models are inherited from your session. The judge and the critic keep high reasoning effort. To give them a stronger model than the rest, fill `CODEX_MODELS` in `scripts/sync_codex.py` with ids from your Codex model list, then run the script.
-
-## Use it in Claude Code
-
-Open this folder in Claude Code and type:
+Then type:
 
 ```
 /factory invoicing for freelance designers in Brazil
 ```
 
-Other commands:
+> 💡 Fill in `founder.md` first, or let the factory ask you. Your weekly hours and your budget shape the whole plan.
 
-```
-/factory status
-/factory resume 20261116_invoicing_designers
-```
+---
 
-The first time you open the folder, Claude Code asks you to trust it. The file `.claude/settings.json` lets the agents search the web, fetch pages and write inside `runs/` without asking each time. Remove a line there if you prefer to approve those yourself.
+## 🎯 Why use it
 
-## What happens
+* **It says no.** Most ideas should fail, and the judge is built to kill them early. A NO GO on day one saves you a month.
+* **Evidence, not vibes.** Every claim has a source link. Every estimate is marked ESTIMATE with the math shown. Nothing is invented.
+* **Three signals, not one.** Demand counts as real only when at least two of these agree: search trends, customer complaints and competitor revenue.
+* **You stay in charge.** The factory stops at two gates and whenever direction is in doubt. It never contacts anyone, publishes anything or spends money.
+* **You get a plan, not a report.** Thresholds that decide pass or fail, a daily calendar, copy you can paste and the tools to build with.
 
-1. Intake. The factory writes a brief and asks you what is missing.
-2. Research. Three agents work at the same time. The scout maps the market and runs search trend analysis, the miner reads competitor reviews and forums for real complaints, and the analyst sizes the market and estimates competitor revenue from their traffic.
-3. Verdict. The judge checks the evidence, scores the candidate problems and says GO, PIVOT or NO GO.
-4. Gate 1. You decide: proceed, pick another candidate, dig deeper or stop.
-5. Plan. The strategist writes a 30 day validation and campaign plan with thresholds, a calendar and copy you can paste.
-6. Review. The critic stress tests the plan and sends it back for up to two revisions.
-7. Gate 2. You approve the plan, ask for changes or stop.
-8. Build plan. The architect picks existing tools for the validation and for the first version of the product.
+---
 
-The factory also stops to ask you whenever an agent is unsure about direction. It never contacts anyone, publishes anything or spends money.
+## 🧭 How it works
 
-## Where things are
-
-```
-founder.md                      who you are, your hours and budget
-runs/<date>_<slug>/             one folder per idea
-  brief.md
-  research/market.md
-  research/pains.md
-  research/viability.md
-  verdict.md
-  plan.md
-  review.md
-  build.md
-  summary.md
-  decisions.md                  every answer you gave
-  state.json                    where the run stopped
-AGENTS.md                       shared rules, read by Codex and by Claude Code
-CLAUDE.md                       imports AGENTS.md
-.claude/skills/factory/SKILL.md the orchestrator in Claude Code
-.claude/agents/                 the seven specialists in Claude Code (source of truth)
-skills/factory/SKILL.md          the orchestrator in Codex (also linked at .agents/skills/factory)
-skills/factory/specialists/           the seven specialists in Codex (generated)
-.codex/config.toml              Codex settings for this project
-scripts/sync_codex.py           makes the Codex specialists from .claude/agents
+```mermaid
+flowchart LR
+    A[Your idea] --> B[Intake]
+    B --> C1[Scout<br/>market and search trends]
+    B --> C2[Miner<br/>reviews and complaints]
+    B --> C3[Analyst<br/>size and revenue]
+    C1 --> D{Judge<br/>GO / PIVOT / NO GO}
+    C2 --> D
+    C3 --> D
+    D --> G1([Gate 1: you decide])
+    G1 --> E[Strategist<br/>30 day plan]
+    E --> F[Critic<br/>review]
+    F -->|revise| E
+    F --> G2([Gate 2: you approve])
+    G2 --> H[Architect<br/>tools and build plan]
+    H --> I[summary.md]
 ```
 
-## Models
+| Agent | What it does | Writes |
+| :- | :- | :- |
+| 🔭 **Scout** | Maps competitors and pricing, runs search trend analysis | `research/market.md` |
+| ⛏️ **Miner** | Reads reviews and forums for real complaints and gaps | `research/pains.md` |
+| 📊 **Analyst** | Sizes the market, estimates competitor revenue from traffic | `research/viability.md` |
+| ⚖️ **Judge** | Checks the sources, scores each problem, gives the verdict | `verdict.md` |
+| 🗺️ **Strategist** | Writes the 30 day validation and campaign plan | `plan.md` |
+| 🔍 **Critic** | Stress tests the plan, sends it back up to two times | `review.md` |
+| 🛠️ **Architect** | Picks existing tools for the test and the first version | `build.md` |
 
-The agents do not all run on the biggest model. The researchers, the strategist and the architect run on Sonnet. The judge and the critic run on Opus, because a wrong verdict or a weak review costs you a month. The table in `CLAUDE.md` explains each choice, and the `model` line at the top of each file in `.claude/agents/` is where you change it.
+---
 
-The orchestrator asks for Sonnet when you type `/factory`. That setting covers the turn that starts the run, so start the session on Sonnet (`/model sonnet`) if you want the whole run to stay there.
+## 📁 What you get
 
-## Several ideas at once
+Every idea gets its own folder, so you can run several side by side.
 
-Each run has its own folder, so you can open one Claude Code session per idea and let them run side by side.
+```
+runs/20261116_invoicing_designers/
+├── brief.md            the idea, the customer, your constraints
+├── research/
+│   ├── market.md       competitors, pricing, search demand
+│   ├── pains.md        ranked problems in customers' own words
+│   └── viability.md    market size, revenue estimates, risks
+├── verdict.md          GO, PIVOT or NO GO, with scores
+├── plan.md             the 30 day plan with thresholds and copy
+├── review.md           what the critic found
+├── build.md            the stack and what it costs per month
+├── summary.md          one page to read first
+├── decisions.md        every answer you gave
+└── state.json          where the run stopped, so you can resume
+```
 
-## Before the first run
+---
 
-Fill in `founder.md`. The hours per week and the budget shape the whole plan. If you leave them blank the factory asks you once and saves the answer.
+## 🕹️ Commands
+
+| Codex | Claude Code | What it does |
+| :- | :- | :- |
+| `$factory <idea>` | `/factory <idea>` | Start a new run |
+| `$factory status` | `/factory status` | List every run and its stage |
+| `$factory resume <run>` | `/factory resume <run>` | Continue where a run stopped |
+
+---
+
+## ⚙️ Good to know
+
+<details>
+<summary><b>Codex notes</b></summary>
+
+* The researchers need live pages. Start Codex with `--search`, or put `web_search = "live"` in your `.codex/config.toml`. This repo already has that file.
+* Questions come as numbered options in the chat. Reply with a number.
+* Codex does not limit where an agent writes. Each agent is told to write only inside its run folder, but nothing enforces it. Check the diff of a run before you commit it.
+* The agents use your session's model. The judge and the critic keep high reasoning effort. To give them a stronger model, fill `CODEX_MODELS` in `scripts/sync_codex.py` and run it.
+
+</details>
+
+<details>
+<summary><b>Claude Code notes</b></summary>
+
+* Claude Code asks you to trust the folder the first time. `.claude/settings.json` lets the agents search the web and write inside `runs/` without asking each time. Remove a line if you prefer to approve those yourself.
+* Researchers, the strategist and the architect run on Sonnet. The judge and the critic run on Opus with high effort, because a wrong verdict costs you a month. Change the `model` line in `.claude/agents/` to adjust.
+
+</details>
+
+<details>
+<summary><b>Changing the factory</b></summary>
+
+* `.claude/agents/` is the source of truth for the specialists. After you edit one, run `python3 scripts/sync_codex.py` to rebuild the Codex versions in `skills/factory/specialists/`.
+* To change how ideas are scored, edit the criteria in `.claude/agents/judge.md`.
+* To change when you are asked, edit the "Checkpoint policy" in both skills: `skills/factory/SKILL.md` and `.claude/skills/factory/SKILL.md`.
+* Shared rules for every agent live in `AGENTS.md`.
+
+</details>
+
+---
+
+<div align="center">
+
+**Most ideas should fail. Find out which ones in a day, not a month.**
+
+</div>
